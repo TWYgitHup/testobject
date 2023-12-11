@@ -1,0 +1,75 @@
+package ${package.Controller};
+
+
+import ${package.Entity}.${entity};
+import ${package.Service}.${table.serviceName};
+import com.example.springboot.service.PlaneService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+#if(${restControllerStyle})
+import org.springframework.web.bind.annotation.RestController;
+#else
+import org.springframework.stereotype.Controller;
+#end
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
+
+/**
+ * <p>
+ * $!{table.comment} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+#if(${kotlin})
+class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
+
+#else
+#if(${superControllerClass})
+public class ${table.controllerName} extends ${superControllerClass} {
+#else
+public class ${table.controllerName} {
+#end
+@Autowired(required = false)
+private ${table.serviceName} ${table.entityPath}Service;
+
+@PostMapping("/updinfo")
+public int UpdInfo(@RequestBody ${entity} ${table.entityPath}){
+        return ${table.entityPath}Service.UpdInfo(${table.entityPath});
+        }
+@GetMapping("/show")
+public List<${entity}> index(){
+        return ${table.entityPath}Service.index();
+        }
+@PostMapping("/add")
+public int add(@RequestBody ${entity} ${table.entityPath}){
+        return ${table.entityPath}Service.add(${table.entityPath});
+        }
+@PostMapping("/del/{id}")
+public int add(@PathVariable int id){
+        return ${table.entityPath}Service.del(id);
+        }
+
+@GetMapping("/CheckQuery")
+public PageInfo<${entity}> CheckQuery(@RequestParam int size, @RequestParam int pages){
+        System.out.println(size+"\t"+pages);
+        PageHelper.startPage(pages, size);
+        PageInfo<${entity}> pi = new PageInfo<>(${table.entityPath}Service.CheckQuery());
+        return pi;
+        }
+}
+
+#end
